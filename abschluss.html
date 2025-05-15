@@ -11,7 +11,7 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "landscape" });
 
-      // Werte aus der URL holen
+      // Daten aus URL-Parametern holen
       const params = new URLSearchParams(window.location.search);
       const kap1 = params.get("k1");
       const kap2 = params.get("k2");
@@ -23,12 +23,31 @@
 
       const fallback = (val) => val ? val : "—";
 
+      // Bild vorbereiten
       const img = new Image();
-      img.src = "SecuraMentis_Certificate_Template.png";
+      img.src = "SecuraMentis_Certificate_Template.png"; // Bild liegt im Hauptordner
 
       img.onload = function () {
-        doc.addImage(img, "PNG", 0, 0, 210, 297); // A4 Hochformat
+        // Dynamisches Einpassen des Bildes ins A4 Querformat
+        const pageWidth = doc.internal.pageSize.getWidth();   // 297 mm
+        const pageHeight = doc.internal.pageSize.getHeight(); // 210 mm
+        const imgRatio = img.width / img.height;
 
+        let imgWidth = pageWidth;
+        let imgHeight = pageWidth / imgRatio;
+
+        if (imgHeight > pageHeight) {
+          imgHeight = pageHeight;
+          imgWidth = pageHeight * imgRatio;
+        }
+
+        const xOffset = (pageWidth - imgWidth) / 2;
+        const yOffset = (pageHeight - imgHeight) / 2;
+
+        // Bild einfügen
+        doc.addImage(img, "PNG", xOffset, yOffset, imgWidth, imgHeight);
+
+        // Textinhalt einfügen
         doc.setFont("helvetica", "bold");
         doc.setFontSize(18);
         doc.setTextColor("#00235F");
@@ -37,18 +56,20 @@
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-        doc.text("Kapitel 1: " + fallback(kap1), 20, 60);
-        doc.text("Kapitel 2: " + fallback(kap2), 20, 70);
-        doc.text("Kapitel 3: " + fallback(kap3), 20, 80);
-        doc.text("Kapitel 4: " + fallback(kap4), 20, 90);
-        doc.text("Kapitel 5: " + fallback(kap5), 20, 100);
-        doc.text("Quiz Score: " + fallback(score), 20, 110);
+        doc.text("Kapitel 1 abgeschlossen am: " + fallback(kap1), 20, 60);
+        doc.text("Kapitel 2 abgeschlossen am: " + fallback(kap2), 20, 70);
+        doc.text("Kapitel 3 abgeschlossen am: " + fallback(kap3), 20, 80);
+        doc.text("Kapitel 4 abgeschlossen am: " + fallback(kap4), 20, 90);
+        doc.text("Kapitel 5 abgeschlossen am: " + fallback(kap5), 20, 100);
+        doc.text("Quiz Score: " + fallback(score), 20, 115);
 
         doc.setFont("helvetica", "italic");
         doc.setFontSize(11);
-        doc.text("Dein persönlicher Leitsatz:", 20, 130);
-        doc.text(doc.splitTextToSize(fallback(leitsatz), 240), 20, 140);
+        doc.text("Dein persönlicher Leitsatz:", 20, 135);
+        doc.setFontSize(10);
+        doc.text(doc.splitTextToSize(fallback(leitsatz), 250), 20, 145);
 
+        // PDF speichern
         doc.save("SecuraMentis_Abschluss.pdf");
       };
     };
