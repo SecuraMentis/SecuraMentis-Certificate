@@ -23,8 +23,8 @@ window.onload = function () {
   bg.src   = "SecuraMentis_Certificate_Template.png";          // liegt im selben Ordner
   bg.onload = () => {
     /* a) Vorlage mittig skalieren */
-    const pw = doc.internal.pageSize.getWidth();   // 297 mm
-    const ph = doc.internal.pageSize.getHeight();  // 210 mm
+    const pw = doc.internal.pageSize.getWidth();   // 210 mm
+    const ph = doc.internal.pageSize.getHeight();  // 297 mm
     const r  = bg.width / bg.height;
     let w = pw, h = pw / r;
     if (h > ph) { h = ph; w = ph * r; }
