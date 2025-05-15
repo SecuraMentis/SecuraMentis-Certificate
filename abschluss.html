@@ -11,6 +11,7 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
+      // Parameter
       const params = new URLSearchParams(window.location.search);
       const kap1 = params.get("k1");
       const kap2 = params.get("k2");
@@ -19,24 +20,39 @@
       const kap5 = params.get("k5");
       const score = params.get("score");
       const leitsatz = params.get("leitsatz");
-
       const fallback = val => val ? val : "—";
 
-      const img = new Image();
-      img.src = "SecuraMentis_Certificate_Template.png";
+      // Bilder
+      const bg = new Image();
+      const signature = new Image();
+      let bgLoaded = false;
+      let sigLoaded = false;
 
-      img.onload = function () {
-        // Bild direkt auf komplette Seite (A4 Hochformat)
-        doc.addImage(img, "PNG", 0, 0, 210, 297); 
+      bg.src = "SecuraMentis_Certificate_Template.png";
+      signature.src = "Signature.png";
 
-        // Texte im sichtbaren Bereich setzen
+      bg.onload = () => {
+        bgLoaded = true;
+        checkAndGenerate();
+      };
+      signature.onload = () => {
+        sigLoaded = true;
+        checkAndGenerate();
+      };
+
+      function checkAndGenerate() {
+        if (!bgLoaded || !sigLoaded) return;
+
+        // Hintergrund
+        doc.addImage(bg, "PNG", 0, 0, 210, 297);
+
+        // Text
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
 
-        // Position z. B. unterhalb der Überschrift im weißen Bereich
-        let x = 25;
-        let y = 100;
+        const x = 25;
+        const y = 100;
 
         doc.text("Kapitel 1 abgeschlossen am: " + fallback(kap1), x, y);
         doc.text("Kapitel 2 abgeschlossen am: " + fallback(kap2), x, y + 7);
@@ -49,18 +65,17 @@
         doc.setFont("helvetica", "italic");
         doc.setFontSize(11);
         doc.text("Dein persönlicher Leitsatz:", x, y + 55);
+
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.text(doc.splitTextToSize(fallback(leitsatz), 160), x, y + 62);
 
         // Signatur unten rechts
-        const signature = new Image();
-        signature.src = "Signature.png";
-        signature.onload = () => {
-          doc.addImage(signature, "PNG", 150, 255, 40, 20);
-          doc.save("SecuraMentis_Abschluss.pdf");
-        };
-      };
+        doc.addImage(signature, "PNG", 150, 255, 40, 20);
+
+        // Speichern
+        doc.save("SecuraMentis_Abschluss.pdf");
+      }
     };
   </script>
 </body>
