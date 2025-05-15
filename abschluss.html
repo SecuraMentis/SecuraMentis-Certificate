@@ -29,7 +29,7 @@
         doc.addImage(img, "PNG", 0, 0, 297, 210); // volle A4-Querformat-Breite
 
         // Textfeld-Start (z. B. links mittig)
-        let x = 20;
+        let x = 50;
         let y = 90;
 
         doc.setFont("helvetica", "normal");
@@ -45,7 +45,7 @@
 
         doc.setFont("helvetica", "italic");
         doc.setFontSize(11);
-        doc.text("Dein persönlicher Leitsatz:", x, y + 55);
+        doc.text("Dein persönlicher Leitsatz:", x, y + 50);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.text(doc.splitTextToSize(fallback(leitsatz), 160), x, y + 62);
