@@ -9,9 +9,9 @@
   <script>
     window.onload = function () {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const doc = new jsPDF({ orientation: "landscape" });
 
-      // Parameter
+      // Daten aus URL-Parametern holen
       const params = new URLSearchParams(window.location.search);
       const kap1 = params.get("k1");
       const kap2 = params.get("k2");
@@ -20,62 +20,63 @@
       const kap5 = params.get("k5");
       const score = params.get("score");
       const leitsatz = params.get("leitsatz");
-      const fallback = val => val ? val : "—";
 
-      // Bilder
-      const bg = new Image();
-      const signature = new Image();
-      let bgLoaded = false;
-      let sigLoaded = false;
+      const fallback = (val) => val ? val : "—";
 
-      bg.src = "SecuraMentis_Certificate_Template.png";
-      signature.src = "Signature.png";
+      // Bild vorbereiten
+      const img = new Image();
+      img.src = "SecuraMentis_Certificate_Template.png"; // Bild liegt im Hauptordner
 
-      bg.onload = () => {
-        bgLoaded = true;
-        checkAndGenerate();
-      };
-      signature.onload = () => {
-        sigLoaded = true;
-        checkAndGenerate();
-      };
+      img.onload = function () {
+        // Dynamisches Einpassen des Bildes ins A4 Querformat
+        const pageWidth = doc.internal.pageSize.getWidth();   // 210 mm
+        const pageHeight = doc.internal.pageSize.getHeight(); // 297 mm
+        const imgRatio = img.width / img.height;
 
-      function checkAndGenerate() {
-        if (!bgLoaded || !sigLoaded) return;
+        let imgWidth = pageWidth;
+        let imgHeight = pageWidth / imgRatio;
 
-        // Hintergrund
-        doc.addImage(bg, "PNG", 0, 0, 210, 297);
+        if (imgHeight > pageHeight) {
+          imgHeight = pageHeight;
+          imgWidth = pageHeight * imgRatio;
+        }
 
-        // Text
+        const xOffset = (pageWidth - imgWidth) / 2;
+        const yOffset = (pageHeight - imgHeight) / 2;
+
+        // Bild einfügen
+        doc.addImage(img, "PNG", xOffset, yOffset, imgWidth, imgHeight);
+
+        // Textinhalt einfügen
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.setTextColor("#00235F");
+   
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-
-        const x = 25;
-        const y = 100;
-
-        doc.text("Kapitel 1 abgeschlossen am: " + fallback(kap1), x, y);
-        doc.text("Kapitel 2 abgeschlossen am: " + fallback(kap2), x, y + 7);
-        doc.text("Kapitel 3 abgeschlossen am: " + fallback(kap3), x, y + 14);
-        doc.text("Kapitel 4 abgeschlossen am: " + fallback(kap4), x, y + 21);
-        doc.text("Kapitel 5 abgeschlossen am: " + fallback(kap5), x, y + 28);
-
-        doc.text("Quiz Score: " + fallback(score), x, y + 40);
+        doc.text("Kapitel 1 abgeschlossen am: " + fallback(kap1), 30, 120);
+        doc.text("Kapitel 2 abgeschlossen am: " + fallback(kap2), 30, 125);
+        doc.text("Kapitel 3 abgeschlossen am: " + fallback(kap3), 30, 130);
+        doc.text("Kapitel 4 abgeschlossen am: " + fallback(kap4), 30, 135);
+        doc.text("Kapitel 5 abgeschlossen am: " + fallback(kap5), 30, 140);
+        doc.text("Quiz Score: " + fallback(score), 20, 155);
 
         doc.setFont("helvetica", "italic");
         doc.setFontSize(11);
-        doc.text("Dein persönlicher Leitsatz:", x, y + 55);
-
-        doc.setFont("helvetica", "normal");
+        doc.text("Dein persönlicher Leitsatz:", 30, 170);
         doc.setFontSize(10);
-        doc.text(doc.splitTextToSize(fallback(leitsatz), 160), x, y + 62);
-
-        // Signatur unten rechts
-        doc.addImage(signature, "PNG", 150, 255, 40, 20);
-
-        // Speichern
+        doc.text(doc.splitTextToSize(fallback(leitsatz), 250), 30, 200);
+        
+        const signature = new Image();
+        signature.src = "Signature.png";  // Achtung: gleiche Ordnerstruktur wie HTML-Datei
+        signature.onload = () => {
+        doc.addImage(signature, "PNG", 145, 220, 40, 20); // rechts unten
+        };
+          
+        // PDF speichern
         doc.save("SecuraMentis_Abschluss.pdf");
-      }
+      };
     };
   </script>
 </body>
