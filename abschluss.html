@@ -51,24 +51,29 @@
         doc.setFont("helvetica", "bold");
         doc.setFontSize(18);
         doc.setTextColor("#00235F");
-        doc.text("Certificate SecuraMentis Course", 20, 30);
-
+   
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-        doc.text("Kapitel 1 abgeschlossen am: " + fallback(kap1), 20, 60);
-        doc.text("Kapitel 2 abgeschlossen am: " + fallback(kap2), 20, 70);
-        doc.text("Kapitel 3 abgeschlossen am: " + fallback(kap3), 20, 80);
-        doc.text("Kapitel 4 abgeschlossen am: " + fallback(kap4), 20, 90);
-        doc.text("Kapitel 5 abgeschlossen am: " + fallback(kap5), 20, 100);
-        doc.text("Quiz Score: " + fallback(score), 20, 115);
+        doc.text("Kapitel 1 abgeschlossen am: " + fallback(kap1), 30, 120);
+        doc.text("Kapitel 2 abgeschlossen am: " + fallback(kap2), 30, 125);
+        doc.text("Kapitel 3 abgeschlossen am: " + fallback(kap3), 30, 130);
+        doc.text("Kapitel 4 abgeschlossen am: " + fallback(kap4), 30, 135);
+        doc.text("Kapitel 5 abgeschlossen am: " + fallback(kap5), 30, 140);
+        doc.text("Quiz Score: " + fallback(score), 20, 155);
 
         doc.setFont("helvetica", "italic");
         doc.setFontSize(11);
-        doc.text("Dein persönlicher Leitsatz:", 20, 135);
+        doc.text("Dein persönlicher Leitsatz:", 30, 170);
         doc.setFontSize(10);
-        doc.text(doc.splitTextToSize(fallback(leitsatz), 250), 20, 145);
-
+        doc.text(doc.splitTextToSize(fallback(leitsatz), 250), 30, 200);
+        
+        const signature = new Image();
+        signature.src = "Signature.png";  // Achtung: gleiche Ordnerstruktur wie HTML-Datei
+        signature.onload = () => {
+        doc.addImage(signature, "PNG", 145, 220, 40, 20); // rechts unten
+        };
+          
         // PDF speichern
         doc.save("SecuraMentis_Abschluss.pdf");
       };
