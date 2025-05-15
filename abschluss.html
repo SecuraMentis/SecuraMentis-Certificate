@@ -29,8 +29,8 @@
 
       img.onload = function () {
         // Dynamisches Einpassen des Bildes ins A4 Querformat
-        const pageWidth = doc.internal.pageSize.getWidth(210);   // 210 mm
-        const pageHeight = doc.internal.pageSize.getHeight(297); // 297 mm
+        const pageWidth = doc.internal.pageSize.getWidth();   // 210 mm
+        const pageHeight = doc.internal.pageSize.getHeight(); // 297 mm
         const imgRatio = img.width / img.height;
 
         let imgWidth = pageWidth;
