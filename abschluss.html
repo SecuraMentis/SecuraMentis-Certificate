@@ -20,17 +20,24 @@
       const kap5 = params.get("k5");
       const score = params.get("score");
       const leitsatz = params.get("leitsatz");
+      const kurs = params.get("kurs");
+
       const fallback = (val) => val ? val : "—";
 
       // Zertifikats-Hintergrund laden
       const img = new Image();
       img.src = "SecuraMentis_Certificate_Template.png";
       img.onload = function () {
-        doc.addImage(img, "PNG", 0, 0, 297, 210); // volle A4-Querformat-Breite
+        doc.addImage(img, "PNG", 0, 0, 297, 210); // A4 Querformat
 
-        // Textfeld-Start (z. B. links mittig)
+        // Kurs-Titel zentriert oben
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("Modulabschluss: " + fallback(kurs), 148.5, 25, { align: "center" });
+
+        // Positionierung der Datenblöcke
         let x = 40;
-        let y = 140;
+        let y = 90;
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
@@ -41,16 +48,17 @@
         doc.text("Kapitel 4 abgeschlossen am: " + fallback(kap4), x, y + 21);
         doc.text("Kapitel 5 abgeschlossen am: " + fallback(kap5), x, y + 28);
 
-        doc.text("Quiz Score: " + fallback(score), x, y + 40);
-
+        // Persönlicher Leitsatz
         doc.setFont("helvetica", "italic");
         doc.setFontSize(11);
-        doc.text("Dein persönlicher Leitsatz:", x, y + 50);
+        doc.setTextColor(80, 80, 80);
+        doc.text("Dein persönlicher Leitsatz:", x, y + 45);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
-        doc.text(doc.splitTextToSize(fallback(leitsatz), 160), x, y + 62);
+        doc.setTextColor(0, 0, 0);
+        doc.text(doc.splitTextToSize(fallback(leitsatz), 160), x, y + 55);
 
-        // PDF erzeugen
+        // PDF speichern
         doc.save("SecuraMentis_Abschluss.pdf");
       };
     };
